@@ -1,5 +1,4 @@
 const express = require('express');
-const Joi = require('joi');
 const logger = require('./logger');
 const morgan = require('morgan');
 const config = require('config');
@@ -26,11 +25,3 @@ console.log(config.get('password'));
 const port = process.env.PORT || 3000;
 
 app.listen(port, ()=>{console.log(`Listening on port ${port}`)});
-
-function validateName(course){
-    const schema = {
-        name: Joi.string().min(3).required()
-    }
-
-    return Joi.validate(course, schema);
-}
