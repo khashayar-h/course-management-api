@@ -6,6 +6,8 @@ const app = express();
 
 app.use(express.json());
 app.use(logger.log);
+app.use(express.urlencoded({ extended:true }));
+app.use(express.static('public'));
 
 const courses = [
     {id:1, name:"course 1"},
