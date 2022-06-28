@@ -1,62 +1,27 @@
 const express = require('express');
 const Joi = require('joi');
 const logger = require('./logger');
-
+const morgan = require('morgan');
+const config = require('config');
 const app = express();
+const debug = require('debug')('app:debug');
+const home = require('./routes/home');
 
 app.use(express.json());
 app.use(logger.log);
 app.use(express.urlencoded({ extended:true }));
 app.use(express.static('public'));
+app.use('/', home);
 
-const courses = [
-    {id:1, name:"course 1"},
-    {id:2, name:"course 2"},
-    {id:3, name:"course 3"}
-]
+if(app.get('env') === 'developement'){
+    app.use(morgan());
+    debug('Morgan Enabled...');
+}
+console.log(`NODE_ENV : ${process.env.NODE_ENV}`);
+console.log(`env : ${app.get('env')}`);
 
-app.get("/", (req, res)=>{
-    res.send(courses);
-});
-
-app.get("/:id", (req, res)=>{
-    const found = courses.find(c=> c.id === parseInt(req.params.id));
-    if(!found) return res.status(404).send("The course was not found !");
-    res.send(found);
-});
-
-app.post("/", (req,res)=>{
-
-    result = validateName(req.body);
-    if(result.error) return res.status(400).send(result.error.details[0].message);
-
-    const course = {
-        id: courses.length +1,
-        name: req.body.name
-    }
-    courses.push(course);
-    res.send(course);
-});
-
-app.put("/:id", (req,res)=>{
-    const found = courses.find(c=> c.id === parseInt(req.params.id));
-    if(!found) return res.status(404).send("The course was not found !");
-
-    result = validateName(req.body);
-    if(result.error) return res.status(400).send(result.error.details[0].message);
-
-        found.name = req.body.name;
-        res.send(found);
-});
-
-app.delete('/:id', (req,res)=>{
-    const found = courses.find(c=> c.id === parseInt(req.params.id));
-    if(!found) return res.status(404).send("The course was not found !");
-
-    const index = courses.indexOf(found);
-    courses.splice(index, 1);
-    res.send(found);
-});
+console.log(config.get('name'));
+console.log(config.get('password'));
 
 const port = process.env.PORT || 3000;
 
